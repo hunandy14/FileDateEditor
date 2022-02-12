@@ -39,8 +39,9 @@ function New-DateTime {
 }
 # New-DateTime
 # New-DateTime "2021-05-12 12:00:00"
+# New-DateTime "2021-05-12 12:00:00" "yyyy-MM-dd HH:mm:ss"
 # New-DateTime "2022/02/13 午前 04:15:45" -JP
-
+# return
 
 
 function Get-FileDate {
@@ -58,44 +59,31 @@ function Get-FileDate {
 
 
 function Set-FileDate {
-    [CmdletBinding(DefaultParameterSetName = "FormatType")]
+    [CmdletBinding(DefaultParameterSetName = "Time")]
     param (
         [Parameter(Position = 0, ParameterSetName = "", Mandatory=$true)]
         [System.Object] $Files,
-        [Parameter(Position = 1, ParameterSetName = "FormatType", Mandatory=$true)]
-        [Parameter(Position = 1, ParameterSetName = "JP", Mandatory=$true)]
-        [string] $DateStr,
-        [Parameter(Position = 2, ParameterSetName = "FormatType")]
-        [string] $FormatType = "yyyy-MM-dd HH:mm:ss",
-        [Parameter(Position = 2, ParameterSetName = "JP")]
-        [switch] $JP,
+        [Parameter(ParameterSetName = "AllDate")]
+        [DateTime] $AllDate,
+        [Parameter(ParameterSetName = "Time")]
+        [DateTime] $CreationTime,
+        [Parameter(ParameterSetName = "Time")]
+        [DateTime] $LastWriteTime,
+        [Parameter(Position = 1, ParameterSetName = "Time", Mandatory=$true)]
+        [DateTime] $LastAccessTime,
         [switch] $Preview
-        
     )
-    $All = $true
-    
-    if ($All) {
-        $AllDate = New-DateTime $DateStr -JP
-        $CreationTime   = $AllDate
-        $LastWriteTime  = $AllDate
+
+    if ($AllDate) {
+        $CreationTime = $AllDate
+        $LastWriteTime = $AllDate
         $LastAccessTime = $AllDate
-    }    
-    
-    
+    }
+
     if (!($Files -is [array])) { $Files = @($Files) }
     for ($i = 0; $i -lt $Files.Count; $i++) {
         $File = $Files[$i]
-        
-        if ($CreationTime) {
-            $File.CreationTime   = $CreationTime
-        }
-        if ($LastWriteTime) {
-            $File.LastWriteTime  = $LastWriteTime
-        }
-        if ($LastAccessTime) {
-            $File.LastAccessTime = $LastAccessTime
-        }
-    
+
         if ($Preview) {
             Write-Host "[$($i+1)]" $File.FullName -ForegroundColor:Yellow
             Write-Host "  " $File.CreationTime   "--> " -NoNewline
@@ -105,10 +93,18 @@ function Set-FileDate {
             Write-Host "  " $File.LastAccessTime "--> " -NoNewline
             Write-Host $LastAccessTime -ForegroundColor:DarkBlue
         }
+
+        if ($CreationTime) {
+            $File.CreationTime = $CreationTime
+        }
+        if ($LastWriteTime) {
+            $File.LastWriteTime = $LastWriteTime
+        }
+        if ($LastAccessTime) {
+            $File.LastAccessTime = $LastAccessTime
+        }
     }
-    
-    
-    
+
     # if ($CreationTime) {
     #     $File.CreationTime = $CreationTime; #建立日期
     # } if ($LastWriteTime) {
@@ -118,13 +114,19 @@ function Set-FileDate {
     # }
 }
 # Set-FileDate (Get-Item "README.md") "2022/02/13 午前 04:00:02"
-Set-FileDate (Get-ChildItem "Test" -Recurse) "2022/02/13 午前 04:02:00" -Preview
+$Date = New-DateTime "2022/02/13 午前 04:55:55" -JP
+$File = (Get-ChildItem "Test" -Recurse)
 
+# Set-FileDate -File:$File -AllDate:$Date -Preview
+# Set-FileDate -File:$File -LastAccessTime:$Date -Preview
+# Set-FileDate -File:$File $Date -Preview
+# Set-FileDate $File -LastAccessTime:$Date -Preview
+# Set-FileDate $File -Preview
 
 
 function FileDate-Editor {
     param (
         $OptionalParameters
     )
-    
+
 }
