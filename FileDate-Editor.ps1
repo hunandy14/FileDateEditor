@@ -1,16 +1,4 @@
-# 讀取檔案日期
-function readFileDate {
-    param (
-        [string]$FileName
-    )
-    $file = Get-Item $FileName;
-    Write-Host "建立日期" $file.CreationTime;     #建立日期
-    Write-Host "修改日期" $file.LastWriteTime;    #修改日期
-    Write-Host "存取日期" $file.LastAccessTime;   #存取日期
-}
-
-
-
+# 建立日期格式
 function New-DateTime {
     [CmdletBinding(DefaultParameterSetName = "FormatType")]
     param (
@@ -44,28 +32,36 @@ function New-DateTime {
 # return
 
 
-function Get-FileDate {
+# 獲取檔案日期
+function FileDatePrinter {
     param (
         [Parameter(Position = 0, ParameterSetName = "", Mandatory=$true)]
-        [System.Object] $File
+        [System.Object] $Files
     )
+    # $Files|Select-Object Name,CreationTime,LastWriteTime,LastAccessTime
     if (!($Files -is [array])) { $Files = @($Files) }
     for ($i = 0; $i -lt $Files.Count; $i++) {
         $File = $Files[$i]
         Write-Host "[$($i+1)]" $File.FullName -ForegroundColor:Yellow
         Write-Host "  建立日期::" -NoNewline
-        Write-Host $File.CreationTime    -ForegroundColor:Cyan
+        Write-Host $File.CreationTime    -ForegroundColor:Cyan -NoNewline
         Write-Host "  修改日期::" -NoNewline
-        Write-Host $File.LastWriteTime   -ForegroundColor:Cyan
+        Write-Host $File.LastWriteTime   -ForegroundColor:Cyan -NoNewline
         Write-Host "  存取日期::" -NoNewline
         Write-Host $File.LastAccessTime  -ForegroundColor:Cyan
     }
-}
-# Get-FileDate (Get-Item "README.md")
+    Write-Host
+} 
+# $Date = New-DateTime "2022/02/13 午前 04:55:55" -JP
+# $File = Get-Item ".\README.md"
+# $File = Get-ChildItem "Test" -Recurse
 
+# FileDatePrinter $File
+# FileDatePrinter (Get-ChildItem "Test" -Recurse)
+# return
 
-
-function FileDate-Editor {
+# 修改檔案日期
+function FileDateEditor {
     [CmdletBinding(DefaultParameterSetName = "Time")]
     param (
         [Parameter(Position = 0, ParameterSetName = "", Mandatory=$true)]
@@ -78,6 +74,7 @@ function FileDate-Editor {
         [DateTime] $LastWriteTime,
         [Parameter(Position = 1, ParameterSetName = "Time")]
         [DateTime] $LastAccessTime,
+        [Parameter(ParameterSetName = "")]
         [switch] $Preview
     )
 
@@ -85,19 +82,19 @@ function FileDate-Editor {
         ($null -eq $LastWriteTime) -and
         ($null -eq $CreationTime) -and
         ($null -eq $AllDate))
-    {
-        Get-FileDate $Files
+    {   # 檢視模式
+        FileDatePrinter $Files
     } else {
+        # 一次修改全部
         if ($AllDate) {
             $CreationTime = $AllDate
             $LastWriteTime = $AllDate
             $LastAccessTime = $AllDate
         }
-
+        # 修改日期
         if (!($Files -is [array])) { $Files = @($Files) }
         for ($i = 0; $i -lt $Files.Count; $i++) {
             $File = $Files[$i]
-
             if ($Preview) {
                 Write-Host "[$($i+1)]" $File.FullName -ForegroundColor:Yellow
                 Write-Host "  " $File.CreationTime   "--> " -NoNewline
@@ -106,39 +103,28 @@ function FileDate-Editor {
                 Write-Host $LastWriteTime -ForegroundColor:DarkBlue
                 Write-Host "  " $File.LastAccessTime "--> " -NoNewline
                 Write-Host $LastAccessTime -ForegroundColor:DarkBlue
-            }
-
-            if ($CreationTime) {
-                $File.CreationTime = $CreationTime
-            }
-            if ($LastWriteTime) {
-                $File.LastWriteTime = $LastWriteTime
-            }
-            if ($LastAccessTime) {
-                $File.LastAccessTime = $LastAccessTime
+            } else {
+                if ($CreationTime  ) { $File.CreationTime   = $CreationTime   }
+                if ($LastWriteTime ) { $File.LastWriteTime  = $LastWriteTime  }
+                if ($LastAccessTime) { $File.LastAccessTime = $LastAccessTime }
             }
         }
-
-        # if ($CreationTime) {
-        #     $File.CreationTime = $CreationTime; #建立日期
-        # } if ($LastWriteTime) {
-        #     $File.LastWriteTime = $LastWriteTime; #修改日期
-        # } if ($LastAccessTime) {
-        #     $File.LastAccessTime = $LastAccessTime; #存取日期
-        # }
     }
 }
-# FileDate-Editor (Get-Item "README.md") "2022/02/13 午前 04:00:02"
-$Date = New-DateTime "2022/02/13 午前 04:55:55" -JP
+# FileDateEditor (Get-Item "README.md") "2022/02/13 午前 04:00:02"
+# $Date = New-DateTime "2022/02/13 午前 04:55:55" -JP
 # $File = Get-Item ".\README.md"
-$File = Get-ChildItem "Test" -Recurse
+# $File = Get-ChildItem "Test" -Recurse
 
-# FileDate-Editor -File:$File -AllDate:$Date -Preview
-# FileDate-Editor -File:$File -LastAccessTime:$Date -Preview
-# FileDate-Editor -File:$File $Date -Preview
-# FileDate-Editor $File -Preview
+# FileDateEditor -File:$File -AllDate:$Date -Preview
+# FileDateEditor -File:$File -LastAccessTime:$Date -Preview
+# FileDateEditor -File:$File $Date -Preview
+# FileDateEditor $File -Preview
 
-# FileDate-Editor $File -CreationTime:$Date -Preview
-# FileDate-Editor $File -LastWriteTime:$Date -Preview
-# FileDate-Editor $File -LastAccessTime:$Date -Preview
-# FileDate-Editor $File
+# FileDateEditor $File -CreationTime:$Date -Preview
+# FileDateEditor $File -LastWriteTime:$Date -Preview
+# FileDateEditor $File -LastAccessTime:$Date -Preview
+# FileDateEditor $File
+
+# FileDateEditor $File -LastAccessTime:$Date -Preview
+# FileDateEditor
