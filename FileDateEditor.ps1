@@ -44,7 +44,7 @@ function New-DateTime {
 }
 # New-DateTime
 # New-DateTime "1999-05-12 12:00:00" "yyyy-MM-dd HH:mm:ss"
-# New-DateTime "1999-05-12 12:00:00" -Simple
+# New-DateTime "1999-08-31 23:59:59" -Simple
 #
 # New-DateTime "1999/02/13 午前 04:15:45"
 # New-DateTime "1999年02月13日 午前 04:15:45"
@@ -55,6 +55,7 @@ function New-DateTime {
 # New-DateTime "1999/02/13 上午 04:15:45" -TW
 # New-DateTime "1999年02月13日 上午 04:15:45" -TW
 # New-DateTime "1999年02月13日, 上午 04:15:45" -TW
+# return
 
 #==================================================================================================
 # 獲取檔案日期
@@ -174,6 +175,8 @@ function ChangeWriteTime {
         [Parameter(Position = 1, ParameterSetName = "Time")]
         [string] $Date,
         [Parameter(ParameterSetName = "")]
+        [switch] $Simple,
+        [Parameter(ParameterSetName = "")]
         [switch] $Preview
     )
     if (Test-Path $Path -PathType:Leaf) {
@@ -184,10 +187,11 @@ function ChangeWriteTime {
     if ($Date -eq "") {
         FileDateEditor $Files
     } else {
-        $Date2  = New-DateTime $Date
+        $Date2  = New-DateTime $Date -Simple:$Simple
         FileDateEditor $Files $Date2 -Preview:$Preview
     }
 }
 # ChangeWriteTime "Readme.md"
 # ChangeWriteTime "Readme.md" "1999/02/13 午前 06:15:45"
+# ChangeWriteTime "Readme.md" "1999-02-13 23:59:59" -Simple
 #==================================================================================================
