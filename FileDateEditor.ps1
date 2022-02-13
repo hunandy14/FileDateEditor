@@ -191,7 +191,7 @@ function ChangeWriteTime {
         FileDateEditor $Files $Date2 -Preview:$Preview
     }
 }
-# ChangeWriteTime "Readme.md"
-# ChangeWriteTime "Readme.md" "1999/02/13 午前 06:15:45"
-# ChangeWriteTime "Readme.md" "1999-02-13 23:59:59" -Simple
+# ChangeWriteTime "README.md"
+# ChangeWriteTime "README.md" "1999/02/13 午前 06:15:45"
+# ChangeWriteTime "README.md" "1999-02-13 23:59:59" -Simple
 #==================================================================================================

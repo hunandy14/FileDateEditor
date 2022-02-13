@@ -5,13 +5,17 @@
 把最常用的選項拉出來減少輸入，比較方便。
 
 ```
-# 查看日期(目錄或單一檔案都可以)
+# 查看日期
+irm bit.ly/34DB0Kb|iex; ChangeWriteTime "README.md"
 irm bit.ly/34DB0Kb|iex; ChangeWriteTime "Test"
 
-# 變更修改日期(台灣)
+# 變更修改日期(通用格式)
+ChangeWriteTime "Readme.md" "1999-02-13 23:59:59" -Simple
+
+# 變更修改日期(繁體中文)
 irm bit.ly/34DB0Kb|iex; ChangeWriteTime "Test" -Date:"2022/2/1 上午 00:00:00"
 
-# 變更修改日期(日本)
+# 變更修改日期(日文)
 irm bit.ly/34DB0Kb|iex; ChangeWriteTime "Test" -Date:"2022/2/1 午前 00:00:00"
 ```
 
