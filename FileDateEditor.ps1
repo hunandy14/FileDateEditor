@@ -182,6 +182,8 @@ function ChangeWriteTime {
         [Parameter(ParameterSetName = "")]
         [switch] $Simple,
         [Parameter(ParameterSetName = "")]
+        [System.Object] $Filter,
+        [Parameter(ParameterSetName = "")]
         [switch] $Force,
         [Parameter(ParameterSetName = "")]
         [switch] $Preview
@@ -189,7 +191,7 @@ function ChangeWriteTime {
     if (Test-Path $Path -PathType:Leaf) {
         $Files = @(Get-Item $Path)
     } elseif (Test-Path $Path -PathType:Container) {
-        $Files = Get-ChildItem $Path -Recurse
+        $Files = Get-ChildItem $Path -Recurse -Include:$Filter
     }
     if ($Date -eq "") {
         FileDateEditor $Files
@@ -205,4 +207,7 @@ function ChangeWriteTime {
 # ChangeWriteTime "Test" "1999/02/13 午前 06:15:45" -Force
 # ChangeWriteTime "Test" "1999-02-13 23:59:59" -Simple -Force
 # ChangeWriteTime "Test" "1999-02-13 23:59:59" -Simple -Preview
+
+# ChangeWriteTime "Test" "1999-02-13 23:59:59" -Simple -Filter:"txt|md" -Force
+# ChangeWriteTime "Test" "1999-02-13 23:59:59" -Simple -Filter:@("*.txt","*.md") -Force
 # ==================================================================================================
