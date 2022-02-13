@@ -155,4 +155,4 @@ function ChangeWriteTime_JP {
 
 # ChangeWriteTime_JP -Path:"README.md"
 # ChangeWriteTime_JP -Path:"Test"
-ChangeWriteTime_JP -Path:"Test" -Date:"2022/02/13 午前 00:00:00"
+# ChangeWriteTime_JP -Path:"Test" -Date:"2022/02/01 午前 00:00:00"
