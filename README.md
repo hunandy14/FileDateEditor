@@ -1,4 +1,4 @@
-修改檔案期限
+變更檔案 建立日期 修改日期 存取日期
 ===
 
 ## 變更修改日期
@@ -10,7 +10,7 @@ irm bit.ly/34DB0Kb|iex; ChangeWriteTime "README.md"
 irm bit.ly/34DB0Kb|iex; ChangeWriteTime "Test"
 
 # 變更修改日期(通用格式)
-ChangeWriteTime "Readme.md" "1999-02-13 23:59:59" -Simple
+irm bit.ly/34DB0Kb|iex; ChangeWriteTime "Readme.md" "1999-02-13 23:59:59" -Simple
 
 # 變更修改日期(繁體中文)
 irm bit.ly/34DB0Kb|iex; ChangeWriteTime "Test" -Date:"2022/2/1 上午 00:00:00"
@@ -36,15 +36,15 @@ $File = Get-ChildItem "Test" -Recurse
 FileDateEditor $File $Date
 
 # 變更個別日期
-FileDateEditor $File -CreationTime:$Date -Preview
-FileDateEditor $File -LastWriteTime:$Date -Preview
-FileDateEditor $File -LastAccessTime:$Date -Preview
+FileDateEditor $File -CreationTime:$Date
+FileDateEditor $File -LastWriteTime:$Date
+FileDateEditor $File -LastAccessTime:$Date
 
 # 變更 [建立、修改、存取] 日期
-# FileDateEditor $File -AllDate:$Date -Preview
+# FileDateEditor $File -AllDate:$Date
 
 # 變更 [修改、存取] 日期 (其他自己類推可任意組合)
-# FileDateEditor $File -LastAccessTime:$Date -LastWriteTime:$Date -Preview
+# FileDateEditor $File -LastAccessTime:$Date -LastWriteTime:$Date
 ```
 
 ## 日期解決方案

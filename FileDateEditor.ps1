@@ -105,6 +105,8 @@ function FileDateEditor {
         [Parameter(ParameterSetName = "Time")]
         [DateTime] $LastAccessTime,
         [Parameter(ParameterSetName = "")]
+        [switch] $Force,
+        [Parameter(ParameterSetName = "")]
         [switch] $Preview
     )
 
@@ -121,24 +123,26 @@ function FileDateEditor {
             $LastWriteTime = $AllDate
             $LastAccessTime = $AllDate
         }
+        # 檔案是否為複數
+        if (!($Files -is [array])) { $Files = @($Files); }
+        if ($Files.Count -eq 1) { $Force=$true }
+        # 警告
+        if (!$Force -and !$Preview) {
+            $response = Read-Host "  確認是否大量變更檔案日期。輸入[N]僅預覽而不變更。 (Y/N) "
+            if (($response -ne "Y") -or ($response -ne "Y")) { $Preview = $true } else { $Preview = $false }
+        }
         # 修改日期
-        if (!($Files -is [array])) { $Files = @($Files) }
         for ($i = 0; $i -lt $Files.Count; $i++) {
             $File = $Files[$i]
-            Write-Host "[$($i+1)]" $File.FullName -ForegroundColor:Yellow
-            # if ($CreationTime  ) { 
+            Write-Host "[$($i+1)]" $File.FullName -ForegroundColor:Yellow -NoNewline
+            if ($Preview) { Write-Host "::Preview"-ForegroundColor:Green } else { Write-Host "::Writed"-ForegroundColor:Green }
                 Write-Host "  " $File.CreationTime   "--> " -NoNewline
-                Write-Host $CreationTime -ForegroundColor:DarkBlue
-            # }
-            # if ($LastWriteTime ) { 
+                Write-Host $CreationTime -ForegroundColor:Blue
                 Write-Host "  " $File.LastWriteTime  "--> " -NoNewline
-                Write-Host $LastWriteTime -ForegroundColor:DarkBlue
-            # }
-            # if ($LastAccessTime) { 
+                Write-Host $LastWriteTime -ForegroundColor:Blue
                 Write-Host "  " $File.LastAccessTime "--> " -NoNewline
-                Write-Host $LastAccessTime -ForegroundColor:DarkBlue
-            # }
-            if (!$Preview) {
+                Write-Host $LastAccessTime -ForegroundColor:Blue
+            if ($Preview) {
                 if ($CreationTime  ) { $File.CreationTime   = $CreationTime   }
                 if ($LastWriteTime ) { $File.LastWriteTime  = $LastWriteTime  }
                 if ($LastAccessTime) { $File.LastAccessTime = $LastAccessTime }
@@ -149,16 +153,17 @@ function FileDateEditor {
 # $Date = New-DateTime "2022-02-13 21:00:00" -Simple
 # $File = Get-Item ".\README.md"
 # $File = Get-ChildItem "Test" -Recurse
-# FileDateEditor $File $Date
-#
-# FileDateEditor $File -AllDate:$Date -Preview
-# FileDateEditor $File -LastAccessTime:$Date -LastWriteTime:$Date -Preview
+# FileDateEditor $File $Date -Force
 # FileDateEditor $File $Date -Preview
-# FileDateEditor $File -Preview
 #
-# FileDateEditor $File -CreationTime:$Date -Preview
-# FileDateEditor $File -LastWriteTime:$Date -Preview
-# FileDateEditor $File -LastAccessTime:$Date -Preview
+# FileDateEditor $File -AllDate:$Date -Force
+# FileDateEditor $File -LastAccessTime:$Date -LastWriteTime:$Date -Force
+# FileDateEditor $File $Date -Force
+# FileDateEditor $File -Force
+#
+# FileDateEditor $File -CreationTime:$Date -Force
+# FileDateEditor $File -LastWriteTime:$Date -Force
+# FileDateEditor $File -LastAccessTime:$Date -Force
 # FileDateEditor $File
 # return
 
@@ -177,6 +182,8 @@ function ChangeWriteTime {
         [Parameter(ParameterSetName = "")]
         [switch] $Simple,
         [Parameter(ParameterSetName = "")]
+        [switch] $Force,
+        [Parameter(ParameterSetName = "")]
         [switch] $Preview
     )
     if (Test-Path $Path -PathType:Leaf) {
@@ -188,10 +195,14 @@ function ChangeWriteTime {
         FileDateEditor $Files
     } else {
         $Date2  = New-DateTime $Date -Simple:$Simple
-        FileDateEditor $Files $Date2 -Preview:$Preview
+        FileDateEditor $Files $Date2 -Force:$Force -Preview:$Preview
     }
 }
 # ChangeWriteTime "README.md"
 # ChangeWriteTime "README.md" "1999/02/13 午前 06:15:45"
 # ChangeWriteTime "README.md" "1999-02-13 23:59:59" -Simple
-#==================================================================================================
+# ChangeWriteTime "Test" "1999/02/13 午前 06:15:45" -Preview
+# ChangeWriteTime "Test" "1999/02/13 午前 06:15:45" -Force
+# ChangeWriteTime "Test" "1999-02-13 23:59:59" -Simple -Force
+# ChangeWriteTime "Test" "1999-02-13 23:59:59" -Simple -Preview
+# ==================================================================================================
