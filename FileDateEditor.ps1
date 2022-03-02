@@ -76,11 +76,11 @@ function FileDatePrinter {
         $LastAccessTime = $File.LastAccessTime.ToString()
         Write-Host "[$($i+1)]" $File.FullName -ForegroundColor:Yellow
         Write-Host "  建立日期::" -NoNewline
-        Write-Host $CreationTime    -ForegroundColor:Cyan -NoNewline
+        Write-Host "'$CreationTime'"    -ForegroundColor:Cyan -NoNewline
         Write-Host "  修改日期::" -NoNewline
-        Write-Host $LastWriteTime   -ForegroundColor:Cyan -NoNewline
+        Write-Host "'$LastWriteTime'"   -ForegroundColor:Cyan -NoNewline
         Write-Host "  存取日期::" -NoNewline
-        Write-Host $LastAccessTime  -ForegroundColor:Cyan
+        Write-Host "'$LastAccessTime'"  -ForegroundColor:Cyan
     }
 }
 # FileDatePrinter (Get-ChildItem "Test" -Recurse)
