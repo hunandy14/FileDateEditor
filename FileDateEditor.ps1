@@ -135,14 +135,15 @@ function FileDateEditor {
         for ($i = 0; $i -lt $Files.Count; $i++) {
             $File = $Files[$i]
             Write-Host "[$($i+1)]" $File.FullName -ForegroundColor:Yellow -NoNewline
-            if ($Preview) { Write-Host "::Preview"-ForegroundColor:Green } else { Write-Host "::Writed"-ForegroundColor:Green }
+            if ($Preview) { Write-Host "::Preview"-ForegroundColor:Green } 
+            else { Write-Host "::Writed"-ForegroundColor:Green }
                 Write-Host "  " $File.CreationTime   "--> " -NoNewline
                 Write-Host $CreationTime -ForegroundColor:Blue
                 Write-Host "  " $File.LastWriteTime  "--> " -NoNewline
                 Write-Host $LastWriteTime -ForegroundColor:Blue
                 Write-Host "  " $File.LastAccessTime "--> " -NoNewline
                 Write-Host $LastAccessTime -ForegroundColor:Blue
-            if ($Preview) {
+            if (!$Preview) {
                 if ($CreationTime  ) { $File.CreationTime   = $CreationTime   }
                 if ($LastWriteTime ) { $File.LastWriteTime  = $LastWriteTime  }
                 if ($LastAccessTime) { $File.LastAccessTime = $LastAccessTime }
