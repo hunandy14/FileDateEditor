@@ -19,14 +19,13 @@ ChangeWriteTime "Test" "1999-02-13 23:59:59" -Simple -Filter:@("*.txt","*.md") -
 # 變更修改日期(通用格式)
 ChangeWriteTime "Readme.md" "1999-02-13 23:59:59" -Simple
 
-# 變更修改日期(繁體中文)
+# 變更修改日期
 ChangeWriteTime "Test" "2022/02/01 上午 00:00:00"
-
-# 變更修改日期(日文)
 ChangeWriteTime "Test" "2022/02/01 午前 00:00:00"
 
 # 變更所有日期
 ChangeWriteTime "Readme.md" "2022/02/01 上午 00:00:00" -AllDate
+ChangeWriteTime "Readme.md" "2022/02/01 午前 00:00:00" -AllDate
 ```
 
 ## 變更日期
