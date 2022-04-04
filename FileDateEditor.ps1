@@ -185,6 +185,8 @@ function ChangeWriteTime {
         [Parameter(ParameterSetName = "")]
         [System.Object] $Filter,
         [Parameter(ParameterSetName = "")]
+        [switch] $AllDate,
+        [Parameter(ParameterSetName = "")]
         [switch] $Force,
         [Parameter(ParameterSetName = "")]
         [switch] $Preview
@@ -198,14 +200,21 @@ function ChangeWriteTime {
         FileDateEditor $Files
     } else {
         $Date2  = New-DateTime $Date -Simple:$Simple
-        FileDateEditor $Files $Date2 -Force:$Force -Preview:$Preview
+        if ($AllDate) {
+            FileDateEditor $Files -AllDate:$Date2 -Force:$Force -Preview:$Preview
+        } else {
+            FileDateEditor $Files $Date2 -Force:$Force -Preview:$Preview
+        }
     }
 }
 # ChangeWriteTime "README.md"
 # ChangeWriteTime "README.md" "1999/02/13 午前 06:15:45"
+# ChangeWriteTime "README.md" "1999/01/01 午前 06:15:45" -AllDate
 # ChangeWriteTime "README.md" "1999-02-13 23:59:59" -Simple
+# ChangeWriteTime "Readme.md" "1999-02-13 23:59:59" -Simple -All
 # ChangeWriteTime "Test" "1999/02/13 午前 06:15:45" -Preview
 # ChangeWriteTime "Test" "1999/02/13 午前 06:15:45" -Force
+# ChangeWriteTime "Test" "1999/02/10 午前 06:15:45" -Force -AllDate
 # ChangeWriteTime "Test" "1999-02-13 23:59:59" -Simple -Force
 # ChangeWriteTime "Test" "1999-02-13 23:59:59" -Simple -Preview
 
