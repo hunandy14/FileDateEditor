@@ -7,11 +7,11 @@
 
 ```ps1
 # 載入函式
-irm bit.ly/34DB0Kb|iex
+irm bit.ly/FileDateEditor|iex
 
 # 查看日期
-irm bit.ly/34DB0Kb|iex; ChangeWriteTime "README.md"
-irm bit.ly/34DB0Kb|iex; ChangeWriteTime "Test"
+irm bit.ly/FileDateEditor|iex; ChangeWriteTime "README.md"
+irm bit.ly/FileDateEditor|iex; ChangeWriteTime "Test"
 
 # 過濾資料夾檔案
 ChangeWriteTime "Test" "1999-02-13 23:59:59" -Simple -Filter:@("*.txt","*.md") -Force
