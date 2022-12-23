@@ -177,7 +177,7 @@ function ChangeWriteTime {
     [CmdletBinding(DefaultParameterSetName = "Time")]
     param (
         [Parameter(Position = 0, ParameterSetName = "", Mandatory=$true)]
-        [string] $Path,
+        [object] $Path,
         [Parameter(Position = 1, ParameterSetName = "Time")]
         [string] $Date,
         [Parameter(ParameterSetName = "")]
@@ -186,16 +186,25 @@ function ChangeWriteTime {
         [System.Object] $Filter,
         [Parameter(ParameterSetName = "")]
         [switch] $AllDate,
+        # 大量變更確認
         [Parameter(ParameterSetName = "")]
         [switch] $Force,
         [Parameter(ParameterSetName = "")]
         [switch] $Preview
     )
-    if (Test-Path $Path -PathType:Leaf) {
-        $Files = @(Get-Item $Path)
-    } elseif (Test-Path $Path -PathType:Container) {
-        $Files = Get-ChildItem $Path -Recurse -Include:$Filter
-    }
+    # 陣列化路徑
+    if ($Path -isnot [array]) { $Path = @($Path) }
+    # 獲取 File 檔案
+    $Files=@()
+    $Path|ForEach-Object {
+        $PathItem = $_
+        if (Test-Path $PathItem -PathType:Leaf) {
+            $Files += @(Get-Item $PathItem)
+        } elseif (Test-Path $PathItem -PathType:Container) {
+            $Files += Get-ChildItem $PathItem -Recurse -Include:$Filter
+        }
+    }; $Files = $Files|Select-Object -Unique
+    # 修改日期
     if ($Date -eq "") {
         FileDateEditor $Files
     } else {
@@ -217,7 +226,7 @@ function ChangeWriteTime {
 # ChangeWriteTime "Test" "1999/02/10 午前 06:15:45" -Force -AllDate
 # ChangeWriteTime "Test" "1999-02-13 23:59:59" -Simple -Force
 # ChangeWriteTime "Test" "1999-02-13 23:59:59" -Simple -Preview
-
 # ChangeWriteTime "Test" "1999-02-13 23:59:59" -Simple -Filter:"txt|md" -Force
 # ChangeWriteTime "Test" "1999-02-13 23:59:59" -Simple -Filter:@("*.txt","*.md") -Force
+# ChangeWriteTime .\Test\a.txt,.\Test\b.txt "1999/01/01 午前 06:15:45"
 # ==================================================================================================
