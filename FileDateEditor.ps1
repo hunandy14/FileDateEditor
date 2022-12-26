@@ -174,17 +174,25 @@ function FileDateEditor {
 # 變更 修改日期
 #==================================================================================================
 function ChangeWriteTime {
-    [CmdletBinding(DefaultParameterSetName = "Time")]
+    [CmdletBinding(DefaultParameterSetName = "Default")]
     param (
-        [Parameter(Position = 0, ParameterSetName = "", Mandatory=$true)]
+        [Parameter(Position = 0, ParameterSetName = "", Mandatory)]
         [object] $Path,
-        [Parameter(Position = 1, ParameterSetName = "Time")]
+        [Parameter(Position = 1, ParameterSetName = "")]
         [string] $Date,
         [Parameter(ParameterSetName = "")]
         [switch] $Simple,
+        # 路徑為資料夾時過濾的清單
         [Parameter(ParameterSetName = "")]
-        [System.Object] $Filter,
-        [Parameter(ParameterSetName = "")]
+        [object] $Filter,
+        # 變更的日期項目(預設是修改日期)
+        [Parameter(ParameterSetName = "CreationTime")]
+        [switch] $CreationTime,
+        [Parameter(ParameterSetName = "LastWriteTime")]
+        [switch] $LastWriteTime,
+        [Parameter(ParameterSetName = "LastAccessTime")]
+        [switch] $LastAccessTime,
+        [Parameter(ParameterSetName = "AllDate")]
         [switch] $AllDate,
         # 大量變更確認
         [Parameter(ParameterSetName = "")]
@@ -204,6 +212,10 @@ function ChangeWriteTime {
             $Files += Get-ChildItem $PathItem -Recurse -Include:$Filter
         }
     }; $Files = $Files|Select-Object -Unique
+    # 自動套用通用格式
+    if (!$Simple) {
+        if ($Date -match "^[0-9]{4}-[0-9]{2}-[0-9]{2}") { $Simple = $true }
+    }
     # 修改日期
     if ($Date -eq "") {
         FileDateEditor $Files
@@ -211,8 +223,14 @@ function ChangeWriteTime {
         $Date2  = New-DateTime $Date -Simple:$Simple
         if ($AllDate) {
             FileDateEditor $Files -AllDate:$Date2 -Force:$Force -Preview:$Preview
+        } elseif ($CreationTime) {
+            FileDateEditor $Files -CreationTime:$Date2 -Force:$Force -Preview:$Preview
+        } elseif ($LastWriteTime) {
+            FileDateEditor $Files -LastWriteTime:$Date2 -Force:$Force -Preview:$Preview
+        } elseif ($LastAccessTime) {
+            FileDateEditor $Files -LastAccessTime:$Date2 -Force:$Force -Preview:$Preview
         } else {
-            FileDateEditor $Files $Date2 -Force:$Force -Preview:$Preview
+            FileDateEditor $Files -LastWriteTime:$Date2 -Force:$Force -Preview:$Preview
         }
     }
 }
@@ -229,4 +247,16 @@ function ChangeWriteTime {
 # ChangeWriteTime "Test" "1999-02-13 23:59:59" -Simple -Filter:"txt|md" -Force
 # ChangeWriteTime "Test" "1999-02-13 23:59:59" -Simple -Filter:@("*.txt","*.md") -Force
 # ChangeWriteTime .\Test\a.txt,.\Test\b.txt "1999/01/01 午前 06:15:45"
+# 測試1
+# ChangeWriteTime .\README.md '2022/12/23 午後 10:11:02'
+# ChangeWriteTime .\README.md '2022/02/01 午前 12:00:00' -CreationTime
+# ChangeWriteTime .\README.md '2022/12/23 午後 10:11:02' -LastWriteTime
+# ChangeWriteTime .\README.md '2022/12/27 午前 12:53:09' -LastAccessTime
+# ChangeWriteTime .\README.md
+# 測試2
+# ChangeWriteTime .\README.md '2022-12-23 22:11:02'
+# ChangeWriteTime .\README.md '2022-02-01 12:00:00' -CreationTime
+# ChangeWriteTime .\README.md '2022-12-23 22:11:02' -LastWriteTime
+# ChangeWriteTime .\README.md '2022-12-27 12:53:09' -LastAccessTime
+# ChangeWriteTime .\README.md
 # ==================================================================================================

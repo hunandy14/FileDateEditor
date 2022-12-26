@@ -1,6 +1,19 @@
 變更檔案 建立日期 修改日期 存取日期
 ===
 
+## 快速使用
+修改
+```ps1
+irm bit.ly/FileDateEditor|iex; ChangeWriteTime 'Readme.md' '2022-12-27 01:31:24'
+```
+
+查看
+```ps1
+irm bit.ly/FileDateEditor|iex; ChangeWriteTime 'Readme.md'
+```
+
+<br><br>
+
 ## 變更修改日期
 把最常用的選項拉出來減少輸入，比較方便。
 先用查看日期然後直接複製回傳的時間格式，貼在同一個指令後方修改日期期可。
@@ -14,19 +27,26 @@ irm bit.ly/FileDateEditor|iex; ChangeWriteTime "README.md"
 irm bit.ly/FileDateEditor|iex; ChangeWriteTime "Test"
 
 # 過濾資料夾檔案
-ChangeWriteTime "Test" "1999-02-13 23:59:59" -Simple -Filter:@("*.txt","*.md") -Force
+ChangeWriteTime "Test" "1999-02-13 23:59:59" -Filter:@("*.txt","*.md") -Force
 
-# 變更修改日期(通用格式)
+# 變更修改日期(指定簡易格式)
 ChangeWriteTime "Readme.md" "1999-02-13 23:59:59" -Simple
 
-# 變更修改日期
-ChangeWriteTime "Test" "2022/02/01 上午 00:00:00"
-ChangeWriteTime "Test" "2022/02/01 午前 00:00:00"
+# 變更修改日期 (通用兩種日期格式)
+ChangeWriteTime "Test" "2022/02/01 下午 00:00:00"
+ChangeWriteTime "Test" "2022-02-01 24:00:00"
 
-# 變更所有日期
-ChangeWriteTime "Readme.md" "2022/02/01 上午 00:00:00" -AllDate
-ChangeWriteTime "Readme.md" "2022/02/01 午前 00:00:00" -AllDate
+# 變更所有日期 (通用日文與中文格式)
+ChangeWriteTime "Readme.md" "2022-02-01 上午 00:00:00" -AllDate
+ChangeWriteTime "Readme.md" "2022-02-01 午前 00:00:00" -AllDate
+
+# 變更指定日期
+ChangeWriteTime .\README.md '2022-02-01 12:00:00' -CreationTime
+ChangeWriteTime .\README.md '2022-12-23 22:11:02' -LastWriteTime
+ChangeWriteTime .\README.md '2022-12-27 12:53:09' -LastAccessTime
 ```
+
+<br><br>
 
 ## 變更日期
 這個是完整的功能，日期與讀檔案要自己處理
@@ -55,6 +75,8 @@ FileDateEditor $File -LastAccessTime:$Date
 # 變更 [修改、存取] 日期 (其他自己類推可任意組合)
 # FileDateEditor $File -LastAccessTime:$Date -LastWriteTime:$Date
 ```
+
+<br><br>
 
 ## 日期解決方案
 這個程式的API範例，推薦優先使用1，2和3是方便用的效能較差。
