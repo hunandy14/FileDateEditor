@@ -15,8 +15,7 @@ irm bit.ly/FileDateEditor|iex; ChangeWriteTime 'Readme.md'
 <br><br>
 
 ## 變更修改日期
-把最常用的選項拉出來減少輸入，比較方便。
-先用查看日期然後直接複製回傳的時間格式，貼在同一個指令後方修改日期期可。
+常用的選項拉出來增加便利性，不知道格式可以先用查看後複製格式。
 
 ```ps1
 # 載入函式
@@ -25,6 +24,9 @@ irm bit.ly/FileDateEditor|iex
 # 查看日期
 irm bit.ly/FileDateEditor|iex; ChangeWriteTime "README.md"
 irm bit.ly/FileDateEditor|iex; ChangeWriteTime "Test"
+
+# 一次修改多個檔案
+ChangeWriteTime Test\a.txt,Test\b.txt "1999-01-01 06:15:45" -Force
 
 # 過濾資料夾檔案
 ChangeWriteTime "Test" "1999-02-13 23:59:59" -Filter:@("*.txt","*.md") -Force
@@ -59,7 +61,7 @@ $File = Get-Item ".\README.md"
 $File = Get-ChildItem "Test" -Recurse
 
 # 查看檔案日期
-# FileDateEditor $File
+FileDateEditor $File
 
 # 變更檔案修改日期(簡潔版)
 FileDateEditor $File $Date
@@ -70,10 +72,10 @@ FileDateEditor $File -LastWriteTime:$Date
 FileDateEditor $File -LastAccessTime:$Date
 
 # 變更 [建立、修改、存取] 日期
-# FileDateEditor $File -AllDate:$Date
+FileDateEditor $File -AllDate:$Date
 
 # 變更 [修改、存取] 日期 (其他自己類推可任意組合)
-# FileDateEditor $File -LastAccessTime:$Date -LastWriteTime:$Date
+FileDateEditor $File -LastAccessTime:$Date -LastWriteTime:$Date
 ```
 
 <br><br>
