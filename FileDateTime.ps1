@@ -24,21 +24,14 @@ function Convert-ToDateTime {
     if ([string]::IsNullOrWhiteSpace($DateString)) { return Get-Date }
     
     try {
-        # 如果 Format 為空，強制使用 Culture 參數集
-        if ($Format) { 
-            return [datetime]::ParseExact( 
-                $DateString, $Format, [Globalization.CultureInfo]::InvariantCulture
-            )
-        }
-
-        # 如果指定了 Format，直接使用 ParseExact
-        if ($PSCmdlet.ParameterSetName -eq 'Format') {
+        # 如果指定了 Format 且不為空，直接使用 ParseExact
+        if ($PSCmdlet.ParameterSetName -eq 'Format' -and $Format) {
             return [datetime]::ParseExact( 
                 $DateString, $Format, [Globalization.CultureInfo]::InvariantCulture
             )
         }
         
-        # 取得要嘗試的文化設定清單
+        # 其他情況使用 Culture 解析
         $cultures = if ($PSBoundParameters.ContainsKey('Culture')) { @($Culture) } else {
             $attributes = (Get-Command -Name $MyInvocation.MyCommand).Parameters['Culture'].Attributes
             $attributes.Where({ $_.GetType().Name -eq 'ValidateSetAttribute' }).ValidValues
@@ -76,7 +69,6 @@ function Convert-ToDateTime {
     }
 }
 
-# Convert-ToDateTime "2023-12-30" -Format ""
 # 基本日期轉換
 # Convert-ToDateTime "2023-12-31"
 # Convert-ToDateTime "2023-12-31 23:59:59"
