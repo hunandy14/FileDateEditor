@@ -24,9 +24,15 @@ function Convert-ToDateTime {
     if ([string]::IsNullOrWhiteSpace($DateString)) { return Get-Date }
     
     try {
+        # 如果 Format 為空，強制使用 Culture 參數集
+        if ($Format) { 
+            return [datetime]::ParseExact( 
+                $DateString, $Format, [Globalization.CultureInfo]::InvariantCulture
+            )
+        }
 
         # 如果指定了 Format，直接使用 ParseExact
-        if ($Format) { 
+        if ($PSCmdlet.ParameterSetName -eq 'Format') {
             return [datetime]::ParseExact( 
                 $DateString, $Format, [Globalization.CultureInfo]::InvariantCulture
             )
@@ -70,7 +76,9 @@ function Convert-ToDateTime {
     }
 }
 
+# Convert-ToDateTime "2023-12-30" -Format ""
 # 基本日期轉換
+# Convert-ToDateTime "2023-12-31"
 # Convert-ToDateTime "2023-12-31 23:59:59"
 # Convert-ToDateTime "2023/12/31 下午 11:59:59"
 # Convert-ToDateTime "2023/12/31 下午 11:59:59" -Culture 'zh-TW'
@@ -80,16 +88,16 @@ function Convert-ToDateTime {
 # 使用者友善介面
 #==================================================================================================
 function Set-FileDateTime {
-    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Specific')]
+    [CmdletBinding(DefaultParameterSetName = 'Specific')]
     param (
-        [Parameter(Mandatory, Position = 0, ValueFromPipeline = $true)]
-        [IO.FileInfo[]] $File,
-        
-        [Parameter(Position = 1)]
+        [Parameter(Mandatory, Position = 0)]
         [string] $DateString,
         
+        [Parameter(Mandatory, ValueFromPipeline)]
+        [IO.FileInfo] $File,
+        
         [Parameter()]
-        [string] $DateFormat,
+        [string] $Format,
         
         [Parameter(ParameterSetName = 'Specific')]
         [switch] $Creation,
@@ -104,36 +112,29 @@ function Set-FileDateTime {
         [switch] $All
     )
     
-    # 轉換日期
-    $dateTime = if ($DateFormat) {
-        Convert-ToDateTime $DateString $DateFormat
-    } else {
-        Convert-ToDateTime $DateString
-    }
-    
-    if ($null -eq $dateTime) { return }
-    
-    # 準備參數
-    if ($All) {
-        $setCreation = $true
-        $setWrite = $true
-        $setAccess = $true
-    } else {
-        $setCreation = $Creation
-        $setWrite = $Write -or (!$Creation -and !$Access)  # 如果都沒選，預設修改 Write
-        $setAccess = $Access
-    }
-    
-    # 處理檔案
-    foreach ($item in $File) {
-        if ($PSCmdlet.ShouldProcess($item.FullName, "Modify file date")) {
-            if ($setCreation) { $item.CreationTime = $dateTime }
-            if ($setWrite)    { $item.LastWriteTime = $dateTime }
-            if ($setAccess)   { $item.LastAccessTime = $dateTime }
+    begin {
+        # 轉換日期
+        # $dateTime = Convert-ToDateTime $DateString -Format:$Format
+        $dateTime = if ($Format) {
+            Convert-ToDateTime $DateString -Format:$Format
+        } else {
+            Convert-ToDateTime $DateString
         }
+
+
+        # 準備參數
+        $setCreation = $All -or $Creation
+        $setWrite    = $All -or $Write -or -not ($Creation -or $Access)
+        $setAccess   = $All -or $Access
+    }
+    
+    process {
+        if ($setCreation) { $File.CreationTime = $dateTime }
+        if ($setWrite)    { $File.LastWriteTime = $dateTime }
+        if ($setAccess)   { $File.LastAccessTime = $dateTime }
     }
 }
 
 # 使用範例
-# Get-ChildItem *.txt | Set-FileDateTime "2023-12-31" -All 
+# Get-Item .\Test\File.txt | Set-FileDateTime "2023-12-30"
 # Get-Item "file.txt" | Set-FileDateTime "2023-12-31" -Creation -Write 
