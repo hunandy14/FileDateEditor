@@ -15,7 +15,6 @@ function Convert-ToDate {
             'CurrentCulture', 
             'InvariantCulture', 
             'zh-TW', 
-            'zh-CN', 
             'ja-JP', 
             'en-US'
         )] [string] $Culture = 'CurrentCulture'
@@ -39,16 +38,20 @@ function Convert-ToDate {
         
         # 設定較寬鬆的日期時間解析選項
         $styles = [Globalization.DateTimeStyles]::AllowWhiteSpaces -bor [Globalization.DateTimeStyles]::AssumeLocal
+        
+        # 建立 CultureInfo 快取
+        $cultureInfoCache = @{
+            'CurrentCulture'   = [Globalization.CultureInfo]::CurrentCulture
+            'InvariantCulture' = [Globalization.CultureInfo]::InvariantCulture
+        }
 
         $errors = @()
         foreach ($cultureName in $cultures) {
-            try {
-                $cultureInfo = switch ($cultureName) {
-                    'CurrentCulture'   { [Globalization.CultureInfo]::CurrentCulture }
-                    'InvariantCulture' { [Globalization.CultureInfo]::InvariantCulture }
-                    default            { [Globalization.CultureInfo]::GetCultureInfo($cultureName) }
-                }
-                return [datetime]::Parse($DateString, $cultureInfo, $styles)
+            try { # 如果快取中沒有該文化設定，則建立新的 CultureInfo 物件
+                if (-not $cultureInfoCache.ContainsKey($cultureName)) {
+                    $cultureInfoCache[$cultureName] = [Globalization.CultureInfo]::GetCultureInfo($cultureName)
+                } # 解析日期時間
+                return [datetime]::Parse($DateString, $cultureInfoCache[$cultureName], $styles)
             }
             catch {
                 $errors += @{
