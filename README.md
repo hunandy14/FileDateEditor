@@ -12,7 +12,7 @@ https://github.com/hunandy14/FileDateEditor/tree/master/old
 修改檔案日期 (修改日期)
 
 ```ps1
-irm bit.ly/4gkzM5D|iex; Set-FileDate -File "test\file.txt" "2024-2-10"
+irm bit.ly/4gkzM5D|iex; Set-FileDate -File "test\file.txt" "2024-2-4"
 ```
 
 <br>
@@ -31,21 +31,21 @@ Get-Item 'test/file.txt' | Select-Object Name, CreationTime, LastWriteTime, Last
 
 ```ps1
 # 建立日期
-Get-Item "test\file.txt" | Set-FileDate "2024-2-10" -Creation
+Get-Item "test\file.txt" | Set-FileDate "2024-2-4" -Creation
 
 # 修改日期
-Get-Item "test\file.txt" | Set-FileDate "2024-2-10" -Write
+Get-Item "test\file.txt" | Set-FileDate "2024-2-4" -Write
 
 # 存取日期
-Get-Item "test\file.txt" | Set-FileDate "2024-2-10" -Access
+Get-Item "test\file.txt" | Set-FileDate "2024-2-4" -Access
 
 # 全部
-Get-Item "test\file.txt" | Set-FileDate "2024-2-10" -All
+Get-Item "test\file.txt" | Set-FileDate "2024-2-4" -All
 
 # 日期字串
-Get-Item "test\file.txt" | Set-FileDate "2024-2-10" -DateString "2024-2-10"
+Get-Item "test\file.txt" | Set-FileDate "2024-2-4" -DateString "2024-2-4"
 
 # 日期字串
-Get-Item "test\file.txt" | Set-FileDate "2024-2-10" -DateString "2024-2-10" -Format "yyyy-MM-dd"
+Get-Item "test\file.txt" | Set-FileDate "2024-2-4" -DateString "2024-2-4" -Format "yyyy-MM-dd"
 
 ```
