@@ -45,29 +45,34 @@ function Convert-ToDateTime {
         foreach ($cultureName in $cultures) {
             try {
                 $cultureInfo = switch ($cultureName) {
-                    'CurrentCulture'    { [Globalization.CultureInfo]::CurrentCulture }
-                    'InvariantCulture'  { [Globalization.CultureInfo]::InvariantCulture }
+                    'CurrentCulture'   { [Globalization.CultureInfo]::CurrentCulture }
+                    'InvariantCulture' { [Globalization.CultureInfo]::InvariantCulture }
                     default            { [Globalization.CultureInfo]::GetCultureInfo($cultureName) }
                 }
                 return [datetime]::Parse($DateString, $cultureInfo, $styles)
             }
             catch {
-                $errors += "$cultureName`: $($_.Exception.Message)"
+                $errors += @{
+                    Culture = $cultureName
+                    Error = $_.Exception.Message
+                }
             }
         }
         
-        # 如果所有嘗試都失敗，拋出詳細的錯誤訊息
-        throw "無法使用任何文化設定解析日期字串: '$DateString'`n`n嘗試結果:`n" + ($errors -join "`n")
+        # 如果所有嘗試都失敗，才顯示警告和錯誤
+        if ($errors.Count -eq $cultures.Count) {
+            $errors | ForEach-Object { Write-Warning "[$($_.Culture)] $($_.Error)" }
+            Write-Error "Unable to parse date string with any culture: '$DateString' (Attempted: $($errors.Culture -join ', '))"
+        }
     }
     catch {
         Write-Error $_.Exception.Message
-        return $null
     }
 }
 
 # 基本日期轉換
 # Convert-ToDateTime "2023-12-31 23:59:59"
-Convert-ToDateTime "2023/12/31 下午 11:59:59"
+# Convert-ToDateTime "2023/12/31 下午 11:59:59"
 # Convert-ToDateTime "2023/12/31 下午 11:59:59" -Culture 'zh-TW'
 # Convert-ToDateTime "20231231235959" -Format "yyyyMMddHHmmss"
 
