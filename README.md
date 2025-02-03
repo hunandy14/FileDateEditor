@@ -9,7 +9,7 @@ https://github.com/hunandy14/FileDateEditor/tree/master/old
 修改檔案日期 (修改日期)
 
 ```ps1
-irm bit.ly/4gkzM5D|iex; Set-FileDate "2024-2-10" "test\file.txt"
+irm bit.ly/4gkzM5D|iex; Set-FileDate -File "test\file.txt" "2024-2-10"
 ```
 
 <br>
