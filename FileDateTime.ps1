@@ -48,9 +48,8 @@ function Convert-ToDateTime {
         # 自動嘗試所有支援的文化設定
         $errors = @()
         # 從 ValidateSet 取得支援的文化設定清單
-        $param = (Get-Command -Name $MyInvocation.MyCommand).Parameters['Culture']
-        $validateSet = $param.Attributes | Where-Object { $_.GetType().Name -eq 'ValidateSetAttribute' }
-        $cultures = $validateSet.ValidValues
+        $attributes = (Get-Command -Name $MyInvocation.MyCommand).Parameters['Culture'].Attributes
+        $cultures = $attributes.Where({ $_.GetType().Name -eq 'ValidateSetAttribute' }).ValidValues
 
         foreach ($cultureName in $cultures) {
             try {
