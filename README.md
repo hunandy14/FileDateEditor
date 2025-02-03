@@ -30,6 +30,9 @@ Get-Item 'test/file.txt' | Select-Object Name, CreationTime, LastWriteTime, Last
 詳細使用
 
 ```ps1
+# 載入函式
+irm bit.ly/4gkzM5D|iex;
+
 # 建立日期
 Get-Item "test\file.txt" | Set-FileDate "2024-2-4" -Creation
 
@@ -43,9 +46,6 @@ Get-Item "test\file.txt" | Set-FileDate "2024-2-4" -Access
 Get-Item "test\file.txt" | Set-FileDate "2024-2-4" -All
 
 # 日期字串
-Get-Item "test\file.txt" | Set-FileDate "2024-2-4" -DateString "2024-2-4"
-
-# 日期字串
-Get-Item "test\file.txt" | Set-FileDate "2024-2-4" -DateString "2024-2-4" -Format "yyyy-MM-dd"
+Get-Item "test\file.txt" | Set-FileDate "2024-02-04" -Format "yyyy-MM-dd"
 
 ```
