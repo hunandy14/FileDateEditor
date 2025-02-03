@@ -77,52 +77,13 @@ function Convert-ToDateTime {
 # Convert-ToDateTime "20231231235959" -Format "yyyyMMddHHmmss"
 
 #==================================================================================================
-# 檔案日期設定
-#==================================================================================================
-function Set-FileDateTime {
-    [CmdletBinding(SupportsShouldProcess)]
-    param (
-        [Parameter(Mandatory, Position = 0, ValueFromPipeline = $true)]
-        [System.IO.FileInfo] $File,
-        
-        [Parameter()]
-        [datetime] $CreationTime,
-        
-        [Parameter()]
-        [datetime] $WriteTime,
-        
-        [Parameter()]
-        [datetime] $AccessTime
-    )
-    
-    if ($PSCmdlet.ShouldProcess($File.FullName, "修改檔案日期")) {
-        if ($PSBoundParameters.ContainsKey('CreationTime')) { 
-            $File.CreationTime = $CreationTime 
-        }
-        if ($PSBoundParameters.ContainsKey('WriteTime')) { 
-            $File.LastWriteTime = $WriteTime 
-        }
-        if ($PSBoundParameters.ContainsKey('AccessTime')) { 
-            $File.LastAccessTime = $AccessTime 
-        }
-    }
-}
-
-# 直接設定檔案日期
-# Get-Item "file.txt" | Set-FileDateTime -WriteTime (Get-Date)
-# Get-Item "file.txt" | Set-FileDateTime `
-#     -CreationTime (Get-Date "2023-01-01") `
-#     -WriteTime (Get-Date "2023-06-15") `
-#     -AccessTime (Get-Date "2023-12-31")
-
-#==================================================================================================
 # 使用者友善介面
 #==================================================================================================
-function Update-FileDateTime {
-    [CmdletBinding(SupportsShouldProcess)]
+function Set-FileDateTime {
+    [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Specific')]
     param (
         [Parameter(Mandatory, Position = 0, ValueFromPipeline = $true)]
-        [string[]] $Path,
+        [IO.FileInfo[]] $File,
         
         [Parameter(Position = 1)]
         [string] $DateString,
@@ -130,16 +91,16 @@ function Update-FileDateTime {
         [Parameter()]
         [string] $DateFormat,
         
-        [Parameter()]
+        [Parameter(ParameterSetName = 'Specific')]
         [switch] $Creation,
         
-        [Parameter()]
+        [Parameter(ParameterSetName = 'Specific')]
         [switch] $Write,
         
-        [Parameter()]
+        [Parameter(ParameterSetName = 'Specific')]
         [switch] $Access,
         
-        [Parameter()]
+        [Parameter(ParameterSetName = 'All')]
         [switch] $All
     )
     
@@ -153,32 +114,26 @@ function Update-FileDateTime {
     if ($null -eq $dateTime) { return }
     
     # 準備參數
-    $params = @{}
-    
     if ($All) {
-        $params['CreationTime'] = $dateTime
-        $params['WriteTime'] = $dateTime
-        $params['AccessTime'] = $dateTime
+        $setCreation = $true
+        $setWrite = $true
+        $setAccess = $true
     } else {
-        if ($Creation) { $params['CreationTime'] = $dateTime }
-        if ($Write)    { $params['WriteTime'] = $dateTime }
-        if ($Access)   { $params['AccessTime'] = $dateTime }
-        # 如果都沒選，預設修改 Write
-        if ($params.Count -eq 0) { 
-            $params['WriteTime'] = $dateTime 
-        }
+        $setCreation = $Creation
+        $setWrite = $Write -or (!$Creation -and !$Access)  # 如果都沒選，預設修改 Write
+        $setAccess = $Access
     }
     
     # 處理檔案
-    foreach ($item in $Path) {
-        $file = Get-Item -LiteralPath $item
-        if ($file -is [System.IO.FileInfo]) {
-            $file | Set-FileDateTime @params -WhatIf:$WhatIfPreference
+    foreach ($item in $File) {
+        if ($PSCmdlet.ShouldProcess($item.FullName, "Modify file date")) {
+            if ($setCreation) { $item.CreationTime = $dateTime }
+            if ($setWrite)    { $item.LastWriteTime = $dateTime }
+            if ($setAccess)   { $item.LastAccessTime = $dateTime }
         }
     }
 }
 
-# 使用友善介面
-# Update-FileDateTime "file.txt" "2023-12-31" -All
-# Update-FileDateTime "file.txt" "2023-12-31" -Creation -Write
-# Get-ChildItem *.txt | Update-FileDateTime "2023-12-31" -All 
+# 使用範例
+# Get-ChildItem *.txt | Set-FileDateTime "2023-12-31" -All 
+# Get-Item "file.txt" | Set-FileDateTime "2023-12-31" -Creation -Write 
