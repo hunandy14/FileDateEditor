@@ -121,4 +121,7 @@ function Set-FileDate {
 }
 
 # 使用範例
-# Get-Item .\Test\File.txt | Set-FileDate "2024-02-04"
+# Get-Item test\file.txt | Set-FileDate "2024-2-3"
+# Get-Item test\file.txt | Set-FileDate "2024-02-03"
+# Get-Item test\file.txt | Set-FileDate "2024-02-03 12:00:00"
+# Get-Item test\file.txt | Set-FileDate "2024-02-03 12:00:00" -Format "yyyy-MM-dd HH:mm:ss"
