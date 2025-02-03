@@ -1,7 +1,7 @@
 #==================================================================================================
 # 日期時間處理工具
 #==================================================================================================
-function Convert-ToDateTime {
+function Convert-ToDate {
     [CmdletBinding(DefaultParameterSetName = 'Culture')]
     param (
         [Parameter(Position = 0, ValueFromPipeline = $true)]
@@ -70,16 +70,16 @@ function Convert-ToDateTime {
 }
 
 # 基本日期轉換
-# Convert-ToDateTime "2023-12-31"
-# Convert-ToDateTime "2023-12-31 23:59:59"
-# Convert-ToDateTime "2023/12/31 下午 11:59:59"
-# Convert-ToDateTime "2023/12/31 下午 11:59:59" -Culture 'zh-TW'
-# Convert-ToDateTime "20231231235959" -Format "yyyyMMddHHmmss"
+# Convert-ToDate "2023-12-31"
+# Convert-ToDate "2023-12-31 23:59:59"
+# Convert-ToDate "2023/12/31 下午 11:59:59"
+# Convert-ToDate "2023/12/31 下午 11:59:59" -Culture 'zh-TW'
+# Convert-ToDate "20231231235959" -Format "yyyyMMddHHmmss"
 
 #==================================================================================================
 # 使用者友善介面
 #==================================================================================================
-function Set-FileDateTime {
+function Set-FileDate {
     [CmdletBinding(DefaultParameterSetName = 'Specific')]
     param (
         [Parameter(Mandatory, Position = 0)]
@@ -106,7 +106,7 @@ function Set-FileDateTime {
     
     begin {
         # 轉換日期
-        $dateTime = Convert-ToDateTime $DateString -Format $Format
+        $dateTime = Convert-ToDate $DateString -Format $Format
         # 準備參數
         $setCreation = $All -or $Creation
         $setWrite    = $All -or $Write -or -not ($Creation -or $Access)
@@ -121,4 +121,4 @@ function Set-FileDateTime {
 }
 
 # 使用範例
-# Get-Item .\Test\File.txt | Set-FileDateTime "2024-02-03"
+# Get-Item .\Test\File.txt | Set-FileDate "2024-02-04"
