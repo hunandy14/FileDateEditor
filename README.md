@@ -8,7 +8,7 @@ https://github.com/hunandy14/FileDateEditor/tree/master/old
 
 修改檔案日期
 ```ps1
-irm bit.ly/4gkzM5D|iex; Get-Item 'test/file.txt' | Set-FileDate '2025-2-3'
+irm bit.ly/4gkzM5D|iex; Set-FileDate "2024-2-10" "test\file.txt"
 ```
 
 查看檔案日期

@@ -85,7 +85,7 @@ function Set-FileDate {
         [Parameter(Mandatory, Position = 0)]
         [string] $DateString,
         
-        [Parameter(Mandatory, ValueFromPipeline)]
+        [Parameter(Mandatory, ValueFromPipeline, Position = 1)]
         [IO.FileInfo] $File,
         
         [Parameter()]
@@ -125,3 +125,4 @@ function Set-FileDate {
 # Get-Item test\file.txt | Set-FileDate "2024-02-03"
 # Get-Item test\file.txt | Set-FileDate "2024-02-03 12:00:00"
 # Get-Item test\file.txt | Set-FileDate "2024-02-03 12:00:00" -Format "yyyy-MM-dd HH:mm:ss"
+# Set-FileDate "2024-2-10" "test\file.txt"
