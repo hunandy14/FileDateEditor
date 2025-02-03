@@ -1,6 +1,8 @@
-變更檔案 建立日期 修改日期 存取日期
+變更檔案日期
 ===
-![](img/Cover.png)
+
+舊版連結
+https://github.com/hunandy14/FileDateEditor/tree/master/old
 
 ## 快速使用
 
