@@ -12,7 +12,7 @@ https://github.com/hunandy14/FileDateEditor/tree/master/old
 修改檔案日期 (修改日期)
 
 ```ps1
-irm bit.ly/4gkzM5D|iex; Set-FileDate -File "test\file.txt" "2024-2-4"
+irm bit.ly/4gkzM5D|iex; Set-FileDate -File "test\file.txt" "2025-2-4"
 ```
 
 <br>
@@ -34,19 +34,19 @@ Get-Item 'test/file.txt' | Select-Object Name, CreationTime, LastWriteTime, Last
 irm bit.ly/4gkzM5D|iex;
 
 # 建立日期
-Get-Item "test\file.txt" | Set-FileDate "2024-2-4" -Creation
+Get-Item "test\file.txt" | Set-FileDate "2025-2-4" -Creation
 
 # 修改日期
-Get-Item "test\file.txt" | Set-FileDate "2024-2-4" -Write
+Get-Item "test\file.txt" | Set-FileDate "2025-2-4" -Write
 
 # 存取日期
-Get-Item "test\file.txt" | Set-FileDate "2024-2-4" -Access
+Get-Item "test\file.txt" | Set-FileDate "2025-2-4" -Access
 
 # 全部
-Get-Item "test\file.txt" | Set-FileDate "2024-2-4" -All
+Get-Item "test\file.txt" | Set-FileDate "2025-2-4" -All
 
 # 日期字串
-Get-Item "test\file.txt" | Set-FileDate "2024-02-04" -Format "yyyy-MM-dd"
+Get-Item "test\file.txt" | Set-FileDate "2025-02-04" -Format "yyyy-MM-dd"
 
 ```
 
@@ -57,7 +57,7 @@ Get-Item "test\file.txt" | Set-FileDate "2024-02-04" -Format "yyyy-MM-dd"
 ```ps1
 irm bit.ly/4gkzM5D|iex; 1..10 | ForEach-Object{
   $idx=$_.ToString('00')
-  New-Item -ItemType File -Path "file_2024-02-$idx.txt" |
-  Set-FileDate "2024-02-$idx"
+  New-Item -ItemType File -Path "file_2025-02-$idx.txt" |
+  Set-FileDate "2025-02-$idx"
 }
 ```
