@@ -106,14 +106,7 @@ function Set-FileDateTime {
     
     begin {
         # 轉換日期
-        # $dateTime = Convert-ToDateTime $DateString -Format:$Format
-        $dateTime = if ($Format) {
-            Convert-ToDateTime $DateString -Format:$Format
-        } else {
-            Convert-ToDateTime $DateString
-        }
-
-
+        $dateTime = Convert-ToDateTime $DateString -Format $Format
         # 準備參數
         $setCreation = $All -or $Creation
         $setWrite    = $All -or $Write -or -not ($Creation -or $Access)
@@ -128,5 +121,4 @@ function Set-FileDateTime {
 }
 
 # 使用範例
-# Get-Item .\Test\File.txt | Set-FileDateTime "2023-12-30"
-# Get-Item "file.txt" | Set-FileDateTime "2023-12-31" -Creation -Write 
+# Get-Item .\Test\File.txt | Set-FileDateTime "2024-02-03"
