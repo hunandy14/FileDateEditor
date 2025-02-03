@@ -21,36 +21,27 @@ function Convert-ToDateTime {
         )] [string] $Culture = 'CurrentCulture'
     )
     
-    if ([string]::IsNullOrWhiteSpace($DateString)) {
-        return Get-Date
-    }
+    if ([string]::IsNullOrWhiteSpace($DateString)) { return Get-Date }
     
     try {
-        # 設定較寬鬆的日期時間解析選項
-        $styles = [Globalization.DateTimeStyles]::AllowWhiteSpaces -bor 
-                 [Globalization.DateTimeStyles]::AssumeLocal
 
         # 如果指定了 Format，直接使用 ParseExact
-        if ($Format) {
-            return [datetime]::ParseExact($DateString, $Format, [Globalization.CultureInfo]::InvariantCulture)
+        if ($Format) { 
+            return [datetime]::ParseExact( 
+                $DateString, $Format, [Globalization.CultureInfo]::InvariantCulture
+            )
         }
         
-        # 如果明確指定了 Culture，只使用該文化設定
-        if ($PSBoundParameters.ContainsKey('Culture')) {
-            $cultureInfo = switch ($Culture) {
-                'CurrentCulture'    { [Globalization.CultureInfo]::CurrentCulture }
-                'InvariantCulture'  { [Globalization.CultureInfo]::InvariantCulture }
-                default            { [Globalization.CultureInfo]::GetCultureInfo($Culture) }
-            }
-            return [datetime]::Parse($DateString, $cultureInfo, $styles)
+        # 取得要嘗試的文化設定清單
+        $cultures = if ($PSBoundParameters.ContainsKey('Culture')) { @($Culture) } else {
+            $attributes = (Get-Command -Name $MyInvocation.MyCommand).Parameters['Culture'].Attributes
+            $attributes.Where({ $_.GetType().Name -eq 'ValidateSetAttribute' }).ValidValues
         }
         
-        # 自動嘗試所有支援的文化設定
-        $errors = @()
-        # 從 ValidateSet 取得支援的文化設定清單
-        $attributes = (Get-Command -Name $MyInvocation.MyCommand).Parameters['Culture'].Attributes
-        $cultures = $attributes.Where({ $_.GetType().Name -eq 'ValidateSetAttribute' }).ValidValues
+        # 設定較寬鬆的日期時間解析選項
+        $styles = [Globalization.DateTimeStyles]::AllowWhiteSpaces -bor [Globalization.DateTimeStyles]::AssumeLocal
 
+        $errors = @()
         foreach ($cultureName in $cultures) {
             try {
                 $cultureInfo = switch ($cultureName) {
@@ -75,10 +66,10 @@ function Convert-ToDateTime {
 }
 
 # 基本日期轉換
-Convert-ToDateTime "2023-12-31 23:59:59"
+# Convert-ToDateTime "2023-12-31 23:59:59"
 Convert-ToDateTime "2023/12/31 下午 11:59:59"
-Convert-ToDateTime "2023/12/31 下午 11:59:59" -Culture 'zh-TW'
-Convert-ToDateTime "20231231235959" -Format "yyyyMMddHHmmss"
+# Convert-ToDateTime "2023/12/31 下午 11:59:59" -Culture 'zh-TW'
+# Convert-ToDateTime "20231231235959" -Format "yyyyMMddHHmmss"
 
 #==================================================================================================
 # 檔案日期設定
