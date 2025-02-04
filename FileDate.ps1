@@ -88,8 +88,9 @@ function Set-FileDate {
         [Parameter(Mandatory, Position = 0)]
         [string] $DateString,
         
-        [Parameter(Mandatory, ValueFromPipeline, Position = 1)]
-        [IO.FileInfo] $File,
+        [Parameter(Mandatory, Position = 1, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+        [Alias('FullName')]
+        [string] $File,
         
         [Parameter()]
         [string] $Format,
@@ -108,19 +109,23 @@ function Set-FileDate {
     )
     
     begin {
-        # 轉換日期
         $dateTime = Convert-ToDate $DateString -Format $Format
-        # 準備參數
         $setCreation = $All -or $Creation
         $setWrite    = $All -or $Write -or -not ($Creation -or $Access)
         $setAccess   = $All -or $Access
     }
     
     process {
-        if ($setCreation) { $File.CreationTime = $dateTime }
-        if ($setWrite)    { $File.LastWriteTime = $dateTime }
-        if ($setAccess)   { $File.LastAccessTime = $dateTime }
+        $fileInfo = if ($File -is [IO.FileInfo]) { $File } else {
+            [IO.FileInfo]::new(
+                $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($File)
+            )
+        }
+        if ($setCreation) { $fileInfo.CreationTime = $dateTime }
+        if ($setWrite)    { $fileInfo.LastWriteTime = $dateTime }
+        if ($setAccess)   { $fileInfo.LastAccessTime = $dateTime }
     }
+
 }
 
 # 使用範例
@@ -128,4 +133,4 @@ function Set-FileDate {
 # Get-Item test\file.txt | Set-FileDate "2024-02-03"
 # Get-Item test\file.txt | Set-FileDate "2024-02-03 12:00:00"
 # Get-Item test\file.txt | Set-FileDate "2024-02-03 12:00:00" -Format "yyyy-MM-dd HH:mm:ss"
-# Set-FileDate "2024-2-10" "test\file.txt"
+# Set-FileDate "2024-2-10" "test\..\test\file.txt"
