@@ -117,8 +117,8 @@ function Set-FileDate {
     
     process {
         $fileInfo = if ($File -is [IO.FileInfo]) { $File } else {
-            Get-Item $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($File) -ErrorAction Stop
-        }
+            Get-Item $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($File)
+        } if (-not $fileInfo) { return }
         if ($setCreation) { $fileInfo.CreationTime = $dateTime }
         if ($setWrite)    { $fileInfo.LastWriteTime = $dateTime }
         if ($setAccess)   { $fileInfo.LastAccessTime = $dateTime }
@@ -130,4 +130,5 @@ function Set-FileDate {
 # Get-Item test\file.txt | Set-FileDate "2024-02-03"
 # Get-Item test\file.txt | Set-FileDate "2024-02-03 12:00:00"
 # Get-Item test\file.txt | Set-FileDate "2024-02-03 12:00:00" -Format "yyyy-MM-dd HH:mm:ss"
-# Set-FileDate "2024-2-10" "test\..\test\file.txt"
+# Set-FileDate "2024-2-10" "test\..\test\file2.txt"
+# Set-FileDate "2024-2-10" "test\..\test\file2.txt" -ErrorAction Stop
