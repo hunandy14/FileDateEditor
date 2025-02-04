@@ -4,7 +4,7 @@
 function Convert-ToDate {
     [CmdletBinding(DefaultParameterSetName = 'Culture')]
     param (
-        [Parameter(Position = 0, ValueFromPipeline = $true)]
+        [Parameter(Position = 0, ValueFromPipeline)]
         [ValidateNotNullOrEmpty()]
         [string] $DateString,
         
@@ -83,7 +83,7 @@ function Convert-ToDate {
 # 設定檔案日期時間
 #==================================================================================================
 function Set-FileDate {
-    [CmdletBinding(DefaultParameterSetName = 'Specific')]
+    [CmdletBinding(DefaultParameterSetName = 'Path')]
     param (
         [Parameter(Mandatory, Position = 0)]
         [string] $DateString,
