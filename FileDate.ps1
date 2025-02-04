@@ -117,13 +117,15 @@ function Set-FileDate {
     }
     
     process {
-        if ($Path) {
-            $File = Get-Item $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
+        # 取得檔案資訊
+        $fileInfo = if ($File) { $File } elseif ($Path) {
+            Get-Item $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
         } if (-not $File) { return }
         
-        if ($setCreation) { $File.CreationTime   = $dateTime }
-        if ($setWrite)    { $File.LastWriteTime  = $dateTime }
-        if ($setAccess)   { $File.LastAccessTime = $dateTime }
+        # 設定日期時間
+        if ($setCreation) { $fileInfo.CreationTime   = $dateTime }
+        if ($setWrite)    { $fileInfo.LastWriteTime  = $dateTime }
+        if ($setAccess)   { $fileInfo.LastAccessTime = $dateTime }
     }
 }
 
