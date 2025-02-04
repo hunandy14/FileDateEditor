@@ -1,5 +1,5 @@
 #==================================================================================================
-# 日期時間處理工具
+# 從字串轉換成日期時間物件
 #==================================================================================================
 function Convert-ToDate {
     [CmdletBinding(DefaultParameterSetName = 'Culture')]
@@ -80,7 +80,7 @@ function Convert-ToDate {
 # Convert-ToDate "20231231235959" -Format "yyyyMMddHHmmss"
 
 #==================================================================================================
-# 使用者友善介面
+# 設定檔案日期時間
 #==================================================================================================
 function Set-FileDate {
     [CmdletBinding(DefaultParameterSetName = 'Specific')]
@@ -119,8 +119,8 @@ function Set-FileDate {
         $fileInfo = if ($File -is [IO.FileInfo]) { $File } else {
             Get-Item $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($File)
         } if (-not $fileInfo) { return }
-        if ($setCreation) { $fileInfo.CreationTime = $dateTime }
-        if ($setWrite)    { $fileInfo.LastWriteTime = $dateTime }
+        if ($setCreation) { $fileInfo.CreationTime   = $dateTime }
+        if ($setWrite)    { $fileInfo.LastWriteTime  = $dateTime }
         if ($setAccess)   { $fileInfo.LastAccessTime = $dateTime }
     }
 }
