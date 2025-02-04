@@ -91,7 +91,6 @@ function Set-FileDate {
         [Parameter(Mandatory, Position = 1, ParameterSetName = 'Path')]
         [ValidateNotNullOrEmpty()]
         [string] $Path,
-        
         [Parameter(Mandatory, Position = 1, ValueFromPipeline, ParameterSetName = 'File')]
         [ValidateNotNullOrEmpty()]
         [IO.FileInfo] $File,
@@ -101,10 +100,8 @@ function Set-FileDate {
         
         [Parameter()]
         [switch] $Creation,
-        
         [Parameter()]
         [switch] $Write,
-        
         [Parameter()]
         [switch] $Access
     )
