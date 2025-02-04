@@ -111,9 +111,9 @@ function Set-FileDate {
     
     begin {
         $dateTime = Convert-ToDate $DateString -Format $Format
-        $setCreation = $All -or $Creation
-        $setWrite    = $All -or $Write -or -not ($Creation -or $Access)
-        $setAccess   = $All -or $Access
+        $setCreation = $Creation
+        $setWrite    = $Write -or -not ($Creation -or $Access)
+        $setAccess   = $Access
     }
     
     process {
@@ -124,8 +124,8 @@ function Set-FileDate {
         
         # 設定日期時間
         if ($setCreation) { $fileInfo.CreationTime   = $dateTime }
-        if ($setWrite)    { $fileInfo.LastWriteTime  = $dateTime }
-        if ($setAccess)   { $fileInfo.LastAccessTime = $dateTime }
+        if ($setWrite   ) { $fileInfo.LastWriteTime  = $dateTime }
+        if ($setAccess  ) { $fileInfo.LastAccessTime = $dateTime }
     }
 }
 
