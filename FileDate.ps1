@@ -117,15 +117,12 @@ function Set-FileDate {
     
     process {
         $fileInfo = if ($File -is [IO.FileInfo]) { $File } else {
-            [IO.FileInfo]::new(
-                $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($File)
-            )
+            Get-Item $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($File) -ErrorAction Stop
         }
         if ($setCreation) { $fileInfo.CreationTime = $dateTime }
         if ($setWrite)    { $fileInfo.LastWriteTime = $dateTime }
         if ($setAccess)   { $fileInfo.LastAccessTime = $dateTime }
     }
-
 }
 
 # 使用範例
