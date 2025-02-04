@@ -42,9 +42,6 @@ Get-Item "test\file.txt" | Set-FileDate "2025-2-4" -Write
 # 存取日期
 Get-Item "test\file.txt" | Set-FileDate "2025-2-4" -Access
 
-# 全部
-Get-Item "test\file.txt" | Set-FileDate "2025-2-4" -All
-
 # 日期字串
 Get-Item "test\file.txt" | Set-FileDate "2025-02-04" -Format "yyyy-MM-dd"
 

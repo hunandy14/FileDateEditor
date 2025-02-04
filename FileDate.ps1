@@ -5,6 +5,7 @@ function Convert-ToDate {
     [CmdletBinding(DefaultParameterSetName = 'Culture')]
     param (
         [Parameter(Position = 0, ValueFromPipeline = $true)]
+        [ValidateNotNullOrEmpty()]
         [string] $DateString,
         
         [Parameter(ParameterSetName = 'Format')]
@@ -19,10 +20,8 @@ function Convert-ToDate {
             'en-US'
         )] [string] $Culture = 'CurrentCulture'
     )
-    
-    if ([string]::IsNullOrWhiteSpace($DateString)) { return Get-Date }
-    
     try {
+        if (-not $DateString) { return }
         # 如果指定了 Format 且不為空，直接使用 ParseExact
         if ($PSCmdlet.ParameterSetName -eq 'Format' -and $Format) {
             return [datetime]::ParseExact( 
@@ -78,6 +77,7 @@ function Convert-ToDate {
 # Convert-ToDate "2023/12/31 下午 11:59:59"
 # Convert-ToDate "2023/12/31 下午 11:59:59" -Culture 'zh-TW'
 # Convert-ToDate "20231231235959" -Format "yyyyMMddHHmmss"
+# "" | Convert-ToDate
 
 #==================================================================================================
 # 設定檔案日期時間
@@ -88,24 +88,25 @@ function Set-FileDate {
         [Parameter(Mandatory, Position = 0)]
         [string] $DateString,
         
-        [Parameter(Mandatory, Position = 1, ValueFromPipeline, ValueFromPipelineByPropertyName)]
-        [Alias('FullName')]
-        [string] $File,
+        [Parameter(Mandatory, Position = 1, ParameterSetName = 'Path')]
+        [ValidateNotNullOrEmpty()]
+        [string] $Path,
         
+        [Parameter(Mandatory, Position = 1, ValueFromPipeline, ParameterSetName = 'File')]
+        [ValidateNotNullOrEmpty()]
+        [IO.FileInfo] $File,
+
         [Parameter()]
         [string] $Format,
         
-        [Parameter(ParameterSetName = 'Specific')]
+        [Parameter()]
         [switch] $Creation,
         
-        [Parameter(ParameterSetName = 'Specific')]
+        [Parameter()]
         [switch] $Write,
         
-        [Parameter(ParameterSetName = 'Specific')]
-        [switch] $Access,
-        
-        [Parameter(ParameterSetName = 'All')]
-        [switch] $All
+        [Parameter()]
+        [switch] $Access
     )
     
     begin {
@@ -116,12 +117,13 @@ function Set-FileDate {
     }
     
     process {
-        $fileInfo = if ($File -is [IO.FileInfo]) { $File } else {
-            Get-Item $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($File)
-        } if (-not $fileInfo) { return }
-        if ($setCreation) { $fileInfo.CreationTime   = $dateTime }
-        if ($setWrite)    { $fileInfo.LastWriteTime  = $dateTime }
-        if ($setAccess)   { $fileInfo.LastAccessTime = $dateTime }
+        if ($Path) {
+            $File = Get-Item $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Path)
+        } if (-not $File) { return }
+        
+        if ($setCreation) { $File.CreationTime   = $dateTime }
+        if ($setWrite)    { $File.LastWriteTime  = $dateTime }
+        if ($setAccess)   { $File.LastAccessTime = $dateTime }
     }
 }
 
@@ -130,5 +132,8 @@ function Set-FileDate {
 # Get-Item test\file.txt | Set-FileDate "2024-02-03"
 # Get-Item test\file.txt | Set-FileDate "2024-02-03 12:00:00"
 # Get-Item test\file.txt | Set-FileDate "2024-02-03 12:00:00" -Format "yyyy-MM-dd HH:mm:ss"
+# Set-FileDate "2024-2-10" "test\..\test\file.txt"
 # Set-FileDate "2024-2-10" "test\..\test\file2.txt"
 # Set-FileDate "2024-2-10" "test\..\test\file2.txt" -ErrorAction Stop
+# Set-FileDate ""
+# @($null) | Set-FileDate "2024-2-3"
